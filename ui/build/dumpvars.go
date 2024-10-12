@@ -172,6 +172,9 @@ var BannerVars = []string{
 	"GMS_MAKEFILE",
 	"MAINLINE_MODULES_MAKEFILE",
 	"PRODUCT_SOONG_NAMESPACES",
+	"PIHOOKS_BUILD_GMS_FINGERPRINT",
+	"PIHOOKS_BUILD_FINGERPRINT",
+	"PIHOOKS_MODEL_SPOOF",
 }
 
 func Banner(make_vars map[string]string) string {
