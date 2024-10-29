@@ -118,6 +118,11 @@ def parse_args():
   config["LineageDesc"] = config["BuildDesc"]
   config["LineageDevice"] = config["DeviceName"]
 
+  config["PihooksGmsFp"] = ""
+  config["PihooksGmsModel"] = ""
+  config["PihooksBuildFp"] = ""
+  config["PihooksBuildModel"] = ""
+ 
   if config["BuildNumber"].startswith("eng."):
     config["BuildNumber"] = config["DateUtc"]
 
@@ -251,6 +256,11 @@ def generate_build_info(args):
   print(f"ro.lineage.device={config['LineageDevice']}")
   print(f"ro.crdroid.device={config['LineageDevice']}")
   print(f"ro.sigma.device={config['LineageDevice']}")
+  
+  print(f"persist.sys.pihooks_FINGERPRINT={config['PihooksGmsFp']}")
+  print(f"persist.sys.pihooks_MODEL={config['PihooksGmsModel']}")
+  print(f"persist.sys.pihooks_mainline_FINGERPRINT={config['PihooksBuildFp']}")
+  print(f"persist.sys.pihooks_mainline_MODEL={config['PihooksBuildModel']}")
 
   # These values are deprecated, use "ro.product.cpu.abilist"
   # instead (see below).
