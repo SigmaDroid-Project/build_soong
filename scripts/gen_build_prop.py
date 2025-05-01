@@ -22,6 +22,7 @@ import json
 import os
 import subprocess
 import sys
+import re
 
 TEST_KEY_DIR = "build/make/target/product/security"
 
@@ -118,8 +119,15 @@ def parse_args():
   config["LineageDesc"] = config["BuildDesc"]
   config["LineageDevice"] = config["DeviceName"]
 
+  config["PihooksGmsBrand"] = ""
+  config["PihooksGmsDevice"] = ""
   config["PihooksGmsFp"] = ""
+  config["PihooksGmsId"] = ""
   config["PihooksGmsModel"] = ""
+  config["PihooksGmsManufacturer"] = ""
+  config["PihooksGmsProduct"] = ""
+  config["PihooksGmsSecurityPatch"] = ""
+  config["PihooksGmsSdkVersion"] = ""
   config["PihooksBuildFp"] = ""
   config["PihooksBuildModel"] = ""
  
@@ -257,10 +265,41 @@ def generate_build_info(args):
   print(f"ro.crdroid.device={config['LineageDevice']}")
   print(f"ro.sigma.device={config['LineageDevice']}")
   
-  print(f"persist.sys.pihooks_FINGERPRINT={config['PihooksGmsFp']}")
-  print(f"persist.sys.pihooks_MODEL={config['PihooksGmsModel']}")
+  # Extract 'pihooks_fp' from the config
+  pihooks_fp = config['PihooksGmsFp']
+
+  # Match and set the BUILD ID
+  matchId = re.search(r':(\d+)/([^/:]+)', pihooks_fp)
+  if matchId:
+    config['PihooksGmsId'] = matchId.group(2)
+
+  # Match and set the PRODUCT
+  matchProduct = re.search(r'/(\w+_\w+)/', pihooks_fp)
+  if matchProduct:
+    config['PihooksGmsProduct'] = matchProduct.group(1)
+
+  # Match and set the DEVICE
+  matchDevice = re.search(r'/(\w+):', pihooks_fp)
+  if matchDevice:
+    config['PihooksGmsDevice'] = matchDevice.group(1)
+
+  # Match and set the BRAND
+  matchBrand = re.search(r'^(\w+)/', pihooks_fp)
+  if matchBrand:
+    config['PihooksGmsBrand'] = matchBrand.group(1)
+
+  # Print the results
   print(f"persist.sys.pihooks_mainline_FINGERPRINT={config['PihooksBuildFp']}")
   print(f"persist.sys.pihooks_mainline_MODEL={config['PihooksBuildModel']}")
+  print(f"persist.sys.pihooks_FINGERPRINT={config['PihooksGmsFp']}")
+  print(f"persist.sys.pihooks_MODEL={config['PihooksGmsModel']}")
+  print(f"persist.sys.pihooks_MANUFACTURER={config['PihooksGmsManufacturer']}")
+  print(f"persist.sys.pihooks_SECURITY_PATCH={config['PihooksGmsSecurityPatch']}")
+  print(f"persist.sys.pihooks_DEVICE_INITIAL_SDK_INT={config['PihooksGmsSdkVersion']}")
+  print(f"persist.sys.pihooks_ID={config['PihooksGmsId']}")
+  print(f"persist.sys.pihooks_PRODUCT={config['PihooksGmsProduct']}")
+  print(f"persist.sys.pihooks_DEVICE={config['PihooksGmsDevice']}")
+  print(f"persist.sys.pihooks_BRAND={config['PihooksGmsBrand']}")
 
   # These values are deprecated, use "ro.product.cpu.abilist"
   # instead (see below).
